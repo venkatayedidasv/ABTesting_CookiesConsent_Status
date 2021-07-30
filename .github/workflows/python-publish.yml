@@ -30,6 +30,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install requests
+        python -m pip install selenium
     - name: Build package
       run: python ABTesting.py
 
