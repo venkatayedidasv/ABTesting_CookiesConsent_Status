@@ -12,11 +12,6 @@ on:
   schedule:
     # Runs "at minute 55 past every hour" (see https://crontab.guru)
     - cron: '2 * * * *'
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
 
 jobs:
   deploy:
