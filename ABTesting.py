@@ -12,8 +12,8 @@ chrome_options.add_argument("--window-size=1920x1080")
 chrome_options.add_argument("--enable-javascript")
 d = DesiredCapabilities.CHROME
 d['goog:loggingPrefs'] = { 'browser':'ALL' }
-driver_path = '/opt/chromedriver'
-driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver_path, desired_capabilities=d)
+##driver_path = '/opt/chromedriver' executable_path=driver_path
+driver = webdriver.Chrome(chrome_options=chrome_options, desired_capabilities=d)
 
 ##print("********** Opening Browser***************")
 driver.get("https://www.ikea.com/se/sv/")
