@@ -12,55 +12,26 @@ chrome_options.add_argument("--window-size=1920x1080")
 chrome_options.add_argument("--enable-javascript")
 
 
-#d = DesiredCapabilities.CHROME
-#d['goog:loggingPrefs'] = { 'browser':'ALL' }
+d = DesiredCapabilities.CHROME
+d['goog:loggingPrefs'] = { 'browser':'ALL' }
 
-caps = webdriver.DesiredCapabilities.CHROME.copy()
-caps['goog:loggingPrefs'] = { 'browser':'ALL' }
 
 driver_path = '/opt/chromedriver'
-driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver_path, desired_capabilities=caps)
+driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver_path, desired_capabilities=d)
+
 
 print("********** Opening Browser***************")
-
 driver.get("https://www.ikea.com/se/sv/")
+
 time.sleep(5.0)
-driver.execute_script("console.log(`Hello from Python`)")
-driver.execute_script("console.log(`optimizely`)")
-driver.execute_script("console.log(`window.ikea.cookieConsent.hasConsent(2)`)")
+##driver.execute_script("console.log(`Hello from Python`)")
+driver.execute_script("return console.log(window.ikea.cookieConsent.hasConsent(2))")
+driver.execute_script("return console.log(optimizely[0].isOptOut)")
 
-# print messages
-#for entry in driver.get_log('browser'):
-    #print("--------------")
-    ##print(entry)
-
-##pickle.dump( driver.get_cookies() , open("cookies.pkl","wb"))
-
-##cookies = pickle.load(open("cookies.pkl", "rb"))
-##for cookie in cookies:
-##    driver.add_cookie(cookie)
-
-def cookies_status():
-    Optimizely_cookie = 'NULL'
-    status_key = 'NULL'
-    status_value = 'NULL'
-    for cookie in driver.get_cookies():
-        if 'optimizelyOptOut' in  str(cookie):
-            Optimizely_cookie=cookie
-            print("Optimizely_cookie: ",Optimizely_cookie)
-            print("--------status--------")
-            for key, value in Optimizely_cookie.items():
-                if 'value' in key:
-                    status_key =value
-                elif 'name' in key:
-                        status_value = value
-    print("status: ", status_value +"  "+ status_key)
 
 print("********** Checking for  optimizelyOptOut cookies ***************")
 
-cookies_status()
-
-txt = driver.find_element_by_id('onetrust-accept-btn-handler').click()
+##txt = driver.find_element_by_id('onetrust-accept-btn-handler').click()
 
 print("*********** Accept the cookies  *****************")
 
@@ -68,19 +39,47 @@ print("*********** Refresh the Driver  *****************")
 
 
 
-
-##driver.refresh()
-#
 time.sleep(5.0)
+# print messages
+status_key = ['optimizely']
+for entry in driver.get_log('browser'):
+    print("--------------")
+    ##print(entry)
+    for key, value in entry.items():
+        line_value=str(value)
+        if 'console-api ' in line_value:
+            print(key,value)
+            status=(value[-5:]).strip()
+            status_key.append(status)
 
+    
 print("*********** Checking for  optimizelyOptOut cookies *****************")
 
-for cookie in driver.get_cookies():
-    if '_gid' in  str(cookie):
-        print("**********",cookie)
-    elif '_ga' in  str(cookie):
-         print("**********",cookie)
-         ##   print("status: ", status_value +"  "+ status_key)
+txt = driver.find_element_by_id('onetrust-accept-btn-handler').click()
+driver.refresh()
+
+driver.execute_script("return console.log(window.ikea.cookieConsent.hasConsent(2))")
+##driver.execute_script("return console.log(optimizely[0].isOptOut)")
+
+time.sleep(5.0)
+# print messages
+
+for entry in driver.get_log('browser'):
+    print("--------------")
+    ##print(entry)
+    for key, value in entry.items():
+        line_value=str(value)
+        if 'console-api ' in line_value:
+            print(key,value)
+            status=(value[-5:]).strip()
+            status_key.append(status)
+
+
+
+##print("Optimizely: ", status_key +"hasConsent(2)"+ status_key)
+
+for status_key in status_key:
+    print(status_key)
 
 ##driver.quit()
 
